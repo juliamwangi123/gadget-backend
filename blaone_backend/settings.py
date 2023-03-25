@@ -27,7 +27,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'gadgethub',
+    'gadgethub.apps.GadgethubConfig',
     'rest_framework',
     'corsheaders',
     
@@ -117,6 +117,7 @@ WSGI_APPLICATION = 'blaone_backend.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
+TIME_ZONE = 'Africa/Nairobi'
 
 DATABASES = {
     'default': {
@@ -177,3 +178,4 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
 CORS_ALLOW_ALL_ORIGINS = True
+
