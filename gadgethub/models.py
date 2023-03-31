@@ -16,12 +16,15 @@ class Product(models.Model):
     condition = models.CharField(max_length=1000, null=True, blank=True)
     currency = models.CharField(max_length=200, null=True, blank=True)
     itemVisibility = models.CharField(max_length=200, null=True, blank=True)
+    isSold = models.BooleanField(default=False)
+    isSaved = models.BooleanField(default=False)
     
     price = models.DecimalField(max_digits=7,decimal_places=2)
     reviewsNum = models.IntegerField(null=True, blank=True ,default=0)
     rating = models.DecimalField(max_digits=7,decimal_places=2,default=0)
     stockCount = models.IntegerField(null=True, blank=True,default=0)
     createdAt = models.DateTimeField(auto_now_add=True)
+    
     
     def __str__(self):
         
@@ -34,7 +37,7 @@ class ItemImages(models.Model):
     
     def __str__(self):
         
-        return str(self.product)
+        return str(self.id)
         
 
   
@@ -55,7 +58,7 @@ class Order(models.Model):
     orderNumber = models.CharField(max_length=200, null=True ,blank=True)
     paymentMethod = models.CharField(max_length=200,null=True, blank=True)
     taxPrice = models.DecimalField(max_digits=7,decimal_places=2,null=True, blank=True)
-    totalPrice = models.DecimalField(max_digits=7,decimal_places=2,null=True , blank=True)
+    totalPrice = models.DecimalField(max_digits=15,decimal_places=2,null=True , blank=True)
     isPaid = models.BooleanField(default=False)
     isDelivered = models.BooleanField(default=False)
     paidAt = models.DateTimeField(auto_now_add=False, null=True, blank=True)
@@ -67,12 +70,19 @@ class Order(models.Model):
     
     
 class OrderItem(models.Model):
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
     product = models.ForeignKey(Product, on_delete=models.SET_NULL, null=True)
     order = models.ForeignKey(Order, on_delete=models.SET_NULL,null=True)
     name = models.CharField(max_length=200, null=True, blank=True)
     quantity = models.IntegerField(null=True, default=0,blank=True)
     price = models.DecimalField(max_digits=7,decimal_places=2)
     image = models.CharField(max_length=200, null=True, blank=True)
+    isPaid = models.BooleanField(default=False)
+    createdAt = models.DateTimeField(auto_now_add=True,null=True, blank=True)
+    orderItemNumber = models.CharField(max_length=200, null=True ,blank=True)
+    
+    
+    
     
     
     def __str__(self):
@@ -98,7 +108,7 @@ class UserProfile(models.Model):
     address =  models.CharField(max_length=200, null=True, blank=True)
     city =  models.CharField(max_length=200, null=True, blank=True)
     country =  models.CharField(max_length=200, null=True, blank=True)
-    phone = models.IntegerField(null=True, blank=True)
+    phone = models.CharField(max_length=200, null=True, blank=True)
     image = models.CharField(max_length=20000, blank=True,null=True)
 
     def __str__(self):

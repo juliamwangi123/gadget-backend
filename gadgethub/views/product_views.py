@@ -6,17 +6,18 @@ from rest_framework.permissions import IsAuthenticated,IsAdminUser
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from rest_framework import status
 from gadgethub.models import *
-import base64
+from rest_framework.views import APIView
 from django.core.files.base import ContentFile
 from rest_framework import viewsets
 from rest_framework import permissions
 from django.db.models import Q
+from django.utils import timezone
 
 
 
 @api_view(['GET'])
 def getProducts(request):
-    print(request)
+  
     query = request.query_params.get("search")
     if query == None:
         query = ""
@@ -68,6 +69,9 @@ class createProduct(viewsets.ModelViewSet):
     serializer_class = ProductSerializer
     permission_classes = [permissions.IsAuthenticated]
     
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+    
     # user= request.user
     # data = request.data
     # def base64_to_image(base64_string):
@@ -97,3 +101,58 @@ class createProduct(viewsets.ModelViewSet):
     #     serializer.save()
     #     return Response(serializer.data)
     # return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+class SoldProductsView(APIView):
+    def get(self, request):
+        sold_products = Product.objects.filter(isSold=True, user=request.user)
+        serializer = ProductSerializer(sold_products, many=True)
+        return Response(serializer.data)
+    
+class SavedProductsView(APIView):
+    def get(self, request):
+        saved_products = Product.objects.filter(isSaved=True, user=request.user)
+        serializer = ProductSerializer(saved_products, many=True)
+        return Response(serializer.data)
+    
+    
+    
+    
+@api_view(['PUT'])
+@permission_classes([IsAuthenticated])   
+def saveItem(request,pk):
+    
+    product = Product.objects.get(id=pk)
+ 
+    product.isSaved = True
+    
+  
+   
+    product.save()
+    
+    return Response({"detail": "Product saved successful"})
+    
+    
+    
+@api_view(['GET'])
+@permission_classes([IsAuthenticated]) 
+def getUserProducts(request):
+    
+    user = request.user
+    products = user.product_set.all()
+    serializer = ProductSerializer(products, many=True)
+    
+    return Response(serializer.data)
+
+
+
+@api_view(['DELETE'])
+@permission_classes([IsAuthenticated])   
+def deleteItem(request,pk):
+    user = request.user
+    product = Product.objects.get(id=pk,user=user)
+ 
+    product.delete()
+    
+  
+   
+    
+    return Response({"detail": "Product deleted successful"})

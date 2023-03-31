@@ -3,7 +3,7 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated,IsAdminUser
 from django.utils import timezone
 
-from gadgethub.serializers import ProductSerializer,OrderSerializer
+from gadgethub.serializers import ProductSerializer,OrderSerializer,OrderItemSerializer
 
 from rest_framework import status
 from gadgethub.models import Product, Order,OrderItem,ShippingAddress
@@ -43,6 +43,7 @@ def addOrderItems(request):
             first_dict = product.uploaded_images.first()
             
             item = OrderItem.objects.create(
+                user=user,
                 product=product,
                 order=order,
                 name = product.title,
@@ -93,10 +94,46 @@ def getUserOrders(request):
 def orderPayment(request,pk):
     
     order = Order.objects.get(id=pk)
-  
+ 
     order.isPaid = True
+    
+  
     order.paidAt = timezone.now()
     order.save()
     
     return Response({"detail": "Order payment successful"})
+
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated]) 
+def getUserOrderItems(request):
+    
+    user = request.user
+    orderitems = user.orderitem_set.all().order_by('-createdAt')
+    
+    try:
+        
+       if orderitems and len(orderitems) == 0:
+        
+        return Response({'detail':"No order Items"},status=status.HTTP_400_BAD_REQUEST)
+    
+    
+       else:
+           
+            serializer = OrderItemSerializer(orderitems, many=True)
+            
+            return Response(serializer.data)
+            
+           
+           
+        
+        
+    except:
+        
+        return Response({"detail":"Order-Items does not exist"}, status= status.HTTP_404_NOT_FOUND)
+        
+        
+        
+    
     
