@@ -19,7 +19,7 @@ class Product(models.Model):
     isSold = models.BooleanField(default=False)
     isSaved = models.BooleanField(default=False)
     
-    price = models.DecimalField(max_digits=7,decimal_places=2)
+    price = models.DecimalField(max_digits=20,decimal_places=2)
     reviewsNum = models.IntegerField(null=True, blank=True ,default=0)
     rating = models.DecimalField(max_digits=7,decimal_places=2,default=0)
     stockCount = models.IntegerField(null=True, blank=True,default=0)
