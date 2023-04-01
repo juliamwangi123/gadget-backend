@@ -25,24 +25,24 @@ def getProducts(request):
     
     products = Product.objects.filter(title__icontains=query).order_by('-createdAt').all()
     
-    page = request.query_params.get("page")
-    # products = Product.objects.order_by('-createdAt').all()
-    paginator = Paginator(products,30)
+    # page = request.query_params.get("page")
+    # # products = Product.objects.order_by('-createdAt').all()
+    # paginator = Paginator(products,30)
     
-    try:
-        products = paginator.page(page)
+    # try:
+    #     products = paginator.page(page)
         
-    except PageNotAnInteger:
-        # if page is not an integer, deliver the first page
-        products = paginator.page(1)
-    except EmptyPage:
-        # if the page is out of range, deliver the last page
-        products = paginator.page(paginator.num_pages)
+    # except PageNotAnInteger:
+    #     # if page is not an integer, deliver the first page
+    #     products = paginator.page(1)
+    # except EmptyPage:
+    #     # if the page is out of range, deliver the last page
+    #     products = paginator.page(paginator.num_pages)
     
-    if page == None:
-        page = 1
+    # if page == None:
+    #     page = 1
     
-    page = int(page)
+    # page = int(page)
                     
     # products = Product.objects.filter(
     #             Q(description__icontains=searc) | Q(name__icontains=search)
@@ -51,7 +51,7 @@ def getProducts(request):
     
     serializer = ProductSerializer(products, many=True)
     
-    return Response({"products": serializer.data, "page":page,"pages":paginator.num_pages})
+    return Response(serializer.data)
 
 @api_view(['GET'])
 def getProduct(request,pk):
