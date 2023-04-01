@@ -6,6 +6,11 @@ from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/',include("gadgethub.urls"))
+    path('api/users/',include("gadgethub.urls.user_urls")),
+    path('api/products/',include("gadgethub.urls.product_urls")),
+    path('api/orders/',include("gadgethub.urls.order_urls")),
+    
+    
+    
 ]
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
