@@ -34,9 +34,10 @@ def update_order(sender, instance, **kwargs):
         
         
         
-@receiver(post_save, sender=Order)
-def mark_product_as_sold(sender, instance, **kwargs):
+@receiver(post_save, sender=OrderItem)
+def update_product_is_sold(sender, instance, **kwargs):
+    # Check if the OrderItem is paid
     if instance.isPaid:
-        
-        
-        instance.product_set.update(isSold=instance.isPaid)
+        # Set the isSold field of the associated Product to True
+        instance.product.isSold = True
+        instance.product.save()
