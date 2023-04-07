@@ -39,5 +39,5 @@ def update_product_is_sold(sender, instance, **kwargs):
     # Check if the OrderItem is paid
     if instance.isPaid:
         # Set the isSold field of the associated Product to True
-        instance.product.isSold = True
-        instance.product.save()
+        instance.product_set.update(isSold=True)
+        
